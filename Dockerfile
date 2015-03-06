@@ -1,8 +1,8 @@
 # =============================================================================
-# jdeathe/centos-ssh
+# viklund/centos-devbox
 #
 # CentOS-6 6.5 x86_64 / EPEL Repo. / OpenSSH / Supervisor.
-# 
+#
 # =============================================================================
 FROM centos:centos6
 
@@ -18,34 +18,34 @@ RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-6 \
 # -----------------------------------------------------------------------------
 # Base Install
 # -----------------------------------------------------------------------------
-RUN yum -y reinstall cracklib-dicts
 
 RUN yum -y install \
-    git \
-    vim \
-    sudo \
-    openssh \
-    openssh-server \
-    openssh-clients \
-    man \
-    python-pip \
+        git \
+        vim \
+        sudo \
+        openssh \
+        openssh-server \
+        openssh-clients \
+        man \
+        python-pip \
+    && yum -y reinstall cracklib-dicts \
     && yum -y update bash \
     && rm -rf /var/cache/yum/* \
-    && yum clean all
-
-RUN yum -y groupinstall "Development Tools"
+    && yum clean all \
+    && yum -y groupinstall "Development Tools"
 
 # -----------------------------------------------------------------------------
 # Install supervisord (required to run more than a single process in a container)
 # Note: EPEL package lacks /usr/bin/pidproxy
-# We require supervisor-stdout to allow output of services started by 
+# We require supervisor-stdout to allow output of services started by
 # supervisord to be easily inspected with "docker logs".
+#
+# And virtualenv
 # -----------------------------------------------------------------------------
 RUN pip install --upgrade 'pip >= 1.4, < 1.5' \
     && pip install --upgrade supervisor supervisor-stdout \
-    && mkdir -p /var/log/supervisor/
-
-RUN pip install virtualenv
+    && mkdir -p /var/log/supervisor/ \
+    && pip install virtualenv
 
 # -----------------------------------------------------------------------------
 # Europe/Stockholm Timezone & Networking
