@@ -12,8 +12,8 @@ MAINTAINER Johan Viklund <johan.viklund@bils.se>
 # Import the Centos-6 RPM GPG key to prevent warnings and Add EPEL Repository
 # -----------------------------------------------------------------------------
 RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-6 \
-	&& rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 \
-	&& rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    && rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6 \
+    && rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 # -----------------------------------------------------------------------------
 # Base Install
@@ -21,17 +21,17 @@ RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-6 \
 RUN yum -y reinstall cracklib-dicts
 
 RUN yum -y install \
-	git \
-	vim \
-	sudo \
-	openssh \
-	openssh-server \
-	openssh-clients \
+    git \
+    vim \
+    sudo \
+    openssh \
+    openssh-server \
+    openssh-clients \
     man \
-	python-pip \
-	&& yum -y update bash \
-	&& rm -rf /var/cache/yum/* \
-	&& yum clean all
+    python-pip \
+    && yum -y update bash \
+    && rm -rf /var/cache/yum/* \
+    && yum clean all
 
 RUN yum -y groupinstall "Development Tools"
 
@@ -42,26 +42,26 @@ RUN yum -y groupinstall "Development Tools"
 # supervisord to be easily inspected with "docker logs".
 # -----------------------------------------------------------------------------
 RUN pip install --upgrade 'pip >= 1.4, < 1.5' \
-	&& pip install --upgrade supervisor supervisor-stdout \
-	&& mkdir -p /var/log/supervisor/
+    && pip install --upgrade supervisor supervisor-stdout \
+    && mkdir -p /var/log/supervisor/
 
 RUN pip install virtualenv
 
 # -----------------------------------------------------------------------------
-# UTC Timezone & Networking
+# Europe/Stockholm Timezone & Networking
 # -----------------------------------------------------------------------------
 RUN ln -sf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime \
-	&& echo "NETWORKING=yes" > /etc/sysconfig/network
+    && echo "NETWORKING=yes" > /etc/sysconfig/network
 
 # -----------------------------------------------------------------------------
 # Configure SSH for non-root public key authentication
 # -----------------------------------------------------------------------------
 RUN sed -i \
-	-e 's/^UsePAM yes/#UsePAM yes/g' \
-	-e 's/^#UsePAM no/UsePAM no/g' \
-	-e 's/^#PermitRootLogin yes/PermitRootLogin no/g' \
-	-e 's/^#UseDNS yes/UseDNS no/g' \
-	/etc/ssh/sshd_config
+    -e 's/^UsePAM yes/#UsePAM yes/g' \
+    -e 's/^#UsePAM no/UsePAM no/g' \
+    -e 's/^#PermitRootLogin yes/PermitRootLogin no/g' \
+    -e 's/^#UseDNS yes/UseDNS no/g' \
+    /etc/ssh/sshd_config
 
 # -----------------------------------------------------------------------------
 # Enable the wheel sudoers group
@@ -83,18 +83,14 @@ ADD etc/services-config/ssh/ssh-bootstrap.conf /etc/services-config/ssh/
 ADD etc/services-config/supervisor/supervisord.conf /etc/services-config/supervisor/
 
 RUN chmod 600 /etc/services-config/ssh/sshd_config \
-	&& chmod +x /etc/ssh-bootstrap \
-	&& ln -sf /etc/services-config/supervisor/supervisord.conf /etc/supervisord.conf \
-	&& ln -sf /etc/services-config/ssh/sshd_config /etc/ssh/sshd_config \
-	&& ln -sf /etc/services-config/ssh/ssh-bootstrap.conf /etc/ssh-bootstrap.conf
+    && chmod +x /etc/ssh-bootstrap \
+    && ln -sf /etc/services-config/supervisor/supervisord.conf /etc/supervisord.conf \
+    && ln -sf /etc/services-config/ssh/sshd_config /etc/ssh/sshd_config \
+    && ln -sf /etc/services-config/ssh/ssh-bootstrap.conf /etc/ssh-bootstrap.conf
 
 # -----------------------------------------------------------------------------
-# Purge
+# Expose
 # -----------------------------------------------------------------------------
-#RUN rm -rf /etc/ld.so.cache \
-#	; rm -rf /sbin/sln \
-#	; rm -rf /usr/{{lib,share}/locale,share/{man,doc,info,gnome/help,cracklib,il8n},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-#	; rm -rf /var/cache/{ldconfig,yum}/*
 
 EXPOSE 22
 EXPOSE 80
