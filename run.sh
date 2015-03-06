@@ -5,6 +5,13 @@ if [[ $DIR_PATH == */* ]]; then
 	cd $DIR_PATH
 fi
 
+DOCKER_NAME=$1
+
+if [ "x$DOCKER_NAME" == "x" ]; then
+    echo "Usage: $0 <name>"
+    exit;
+fi
+
 source run.conf
 
 have_docker_container_name ()
@@ -29,45 +36,26 @@ is_docker_container_name_running ()
 	fi
 }
 
-remove_docker_container_name ()
-{
-	NAME=$1
-
-	if have_docker_container_name ${NAME} ; then
-		if is_docker_container_name_running ${NAME} ; then
-			echo Stopping container ${NAME}...
-			(docker stop ${NAME})
-		fi
-		echo Removing container ${NAME}...
-		(docker rm ${NAME})
-	fi
-}
-
-# Configuration volume
-if [ ! "${VOLUME_CONFIG_NAME}" == "$(docker ps -a | grep -v -e \"${VOLUME_CONFIG_NAME}/.*,.*\" | grep -e '[ ]\{1,\}'${VOLUME_CONFIG_NAME} | grep -o ${VOLUME_CONFIG_NAME})" ]; then
-(
-set -x
-docker run \
-	--name ${VOLUME_CONFIG_NAME} \
-	-v ${MOUNT_PATH_CONFIG}/${SERVICE_UNIT_NAME}.${SERVICE_UNIT_SHARED_GROUP}:/etc/services-config/ssh \
-	busybox:latest \
-	/bin/true;
-)
+if is_docker_container_name_running ${DOCKER_NAME} ; then
+    echo "The ${DOCKER_NAME} is already running"
+    exit
+elif have_docker_container_name ${DOCKER_NAME} ; then
+    echo "The ${DOCKER_NAME} already exists, starting..."
+    (
+    set -x
+    docker start ${DOCKER_NAME}
+    )
+else
+    # In a sub-shell set xtrace - prints the docker command to screen for reference
+    (
+    set -x
+    docker run \
+        -d \
+        --name ${DOCKER_NAME} \
+        -P \
+        ${DOCKER_IMAGE_REPOSITORY_NAME}
+    )
 fi
-
-# Force replace container of same name if found to exist
-remove_docker_container_name ${DOCKER_NAME}
-
-# In a sub-shell set xtrace - prints the docker command to screen for reference
-(
-set -x
-docker run \
-	-d \
-	--name ${DOCKER_NAME} \
-	-p :22 \
-	--volumes-from ${VOLUME_CONFIG_NAME} \
-	${DOCKER_IMAGE_REPOSITORY_NAME}
-)
 
 if is_docker_container_name_running ${DOCKER_NAME} ; then
 	docker ps | grep -v -e "${DOCKER_NAME}/.*,.*" | grep ${DOCKER_NAME}
