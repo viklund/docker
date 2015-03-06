@@ -6,7 +6,7 @@
 # =============================================================================
 FROM centos:centos6
 
-MAINTAINER James Deathe <james.deathe@gmail.com>
+MAINTAINER Johan Viklund <johan.viklund@bils.se>
 
 # -----------------------------------------------------------------------------
 # Import the Centos-6 RPM GPG key to prevent warnings and Add EPEL Repository
@@ -18,16 +18,22 @@ RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-6 \
 # -----------------------------------------------------------------------------
 # Base Install
 # -----------------------------------------------------------------------------
+RUN yum -y reinstall cracklib-dicts
+
 RUN yum -y install \
-	vim-minimal \
+	git \
+	vim \
 	sudo \
 	openssh \
 	openssh-server \
 	openssh-clients \
+    man \
 	python-pip \
 	&& yum -y update bash \
 	&& rm -rf /var/cache/yum/* \
 	&& yum clean all
+
+RUN yum -y groupinstall "Development Tools"
 
 # -----------------------------------------------------------------------------
 # Install supervisord (required to run more than a single process in a container)
@@ -39,10 +45,12 @@ RUN pip install --upgrade 'pip >= 1.4, < 1.5' \
 	&& pip install --upgrade supervisor supervisor-stdout \
 	&& mkdir -p /var/log/supervisor/
 
+RUN pip install virtualenv
+
 # -----------------------------------------------------------------------------
 # UTC Timezone & Networking
 # -----------------------------------------------------------------------------
-RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
+RUN ln -sf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime \
 	&& echo "NETWORKING=yes" > /etc/sysconfig/network
 
 # -----------------------------------------------------------------------------
@@ -51,7 +59,6 @@ RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime \
 RUN sed -i \
 	-e 's/^UsePAM yes/#UsePAM yes/g' \
 	-e 's/^#UsePAM no/UsePAM no/g' \
-	-e 's/^PasswordAuthentication yes/PasswordAuthentication no/g' \
 	-e 's/^#PermitRootLogin yes/PermitRootLogin no/g' \
 	-e 's/^#UseDNS yes/UseDNS no/g' \
 	/etc/ssh/sshd_config
@@ -59,7 +66,7 @@ RUN sed -i \
 # -----------------------------------------------------------------------------
 # Enable the wheel sudoers group
 # -----------------------------------------------------------------------------
-RUN sed -i 's/^# %wheel\tALL=(ALL)\tALL/%wheel\tALL=(ALL)\tALL/g' /etc/sudoers
+RUN sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL/%wheel\tALL=(ALL)\tNOPASSWD: ALL/' /etc/sudoers
 
 # -----------------------------------------------------------------------------
 # Make the custom configuration directory
@@ -84,11 +91,15 @@ RUN chmod 600 /etc/services-config/ssh/sshd_config \
 # -----------------------------------------------------------------------------
 # Purge
 # -----------------------------------------------------------------------------
-RUN rm -rf /etc/ld.so.cache \ 
-	; rm -rf /sbin/sln \
-	; rm -rf /usr/{{lib,share}/locale,share/{man,doc,info,gnome/help,cracklib,il8n},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
-	; rm -rf /var/cache/{ldconfig,yum}/*
+#RUN rm -rf /etc/ld.so.cache \
+#	; rm -rf /sbin/sln \
+#	; rm -rf /usr/{{lib,share}/locale,share/{man,doc,info,gnome/help,cracklib,il8n},{lib,lib64}/gconv,bin/localedef,sbin/build-locale-archive} \
+#	; rm -rf /var/cache/{ldconfig,yum}/*
 
 EXPOSE 22
+EXPOSE 80
+EXPOSE 443
+EXPOSE 8000
+EXPOSE 8001
 
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisord.conf"]
