@@ -28,6 +28,7 @@ RUN yum -y install \
         openssh-clients \
         man \
         python-pip \
+        tar \
     && yum -y reinstall cracklib-dicts \
     && yum -y update bash \
     && rm -rf /var/cache/yum/* \
