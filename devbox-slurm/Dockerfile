@@ -48,5 +48,8 @@ RUN chown root:slurm /var/spool && \
 
 COPY supervisor_centos_agda.conf /etc/
 COPY slurm.conf /etc/sysconfig/slurm/slurm.conf
-RUN cat /etc/supervisor_centos_agda.conf >> /etc/supervisord.conf
+COPY slurm-bootstrap /etc/
+
+RUN chmod +x /etc/slurm-bootstrap && \
+    cat /etc/supervisor_centos_agda.conf >> /etc/supervisord.conf
        

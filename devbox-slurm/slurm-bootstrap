@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sed -i "s/<nodename>/$HOSTNAME/" /etc/sysconfig/slurm/slurm.conf
