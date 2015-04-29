@@ -2,7 +2,7 @@
 # viklund/devbox-slurm
 # =============================================================================
 
-FROM viklund/centos-devbox:v4
+FROM viklund/centos-devbox:latest
 MAINTAINER Johan Viklund <johan.viklund@bils.se>
 
 # Munge, httpd and mysql is for slurm
