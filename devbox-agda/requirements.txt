@@ -1,0 +1,32 @@
+Django==1.6.5
+bpython==0.13
+django-braces==1.4.0
+django-model-utils==2.0.3
+logutils==0.3.3
+
+# sudo apt-get install libmysqlclient-dev python-dev (this for MySQL-python)
+MySQL-python==1.2.5
+South==0.8.4
+
+# sudo apt-get install libcrack2-dev (this for cracklib)
+cracklib==2.8.19
+simplejson==3.5.2
+pytz==2014.4
+django-extensions==1.3.7
+
+## LDAP
+django-auth-ldap==1.2.0
+# sudo apt-get install libldap2-dev libsasl2-dev libssl-dev
+python-ldap==2.4.15
+
+## Django suits Admin skin
+django-suit==0.2.8
+
+# Local development dependencies go here
+coverage==3.7.1
+django-discover-runner==1.0
+#Django Debug toolbar
+django-debug-toolbar==1.2.1
+#-e git+https://github.com/django-debug-toolbar/django-debug-toolbar.git@25ea0b4b33ae77ccaf12de5fdb467c9270d948ef#egg=django_debug_toolbar-dev
+Sphinx==1.2.2
+numpydoc==0.4
