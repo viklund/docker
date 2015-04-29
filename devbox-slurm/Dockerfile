@@ -46,10 +46,8 @@ RUN touch /var/spool/last_config_lite && \
 RUN chown root:slurm /var/spool && \
     chmod g+w /var/spool
 
-COPY supervisor_slurm.conf /etc/
+COPY supervisor_slurm.conf /etc/supervisord/
 COPY slurm.conf /etc/sysconfig/slurm/slurm.conf
 COPY slurm-bootstrap /etc/
 
-RUN chmod +x /etc/slurm-bootstrap && \
-    cat /etc/supervisor_slurm.conf >> /etc/supervisord.conf
-       
+RUN chmod +x /etc/slurm-bootstrap
