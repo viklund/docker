@@ -87,7 +87,8 @@ RUN chmod 600 /etc/services-config/ssh/sshd_config \
     && chmod +x /etc/ssh-bootstrap \
     && ln -sf /etc/services-config/supervisor/supervisord.conf /etc/supervisord.conf \
     && ln -sf /etc/services-config/ssh/sshd_config /etc/ssh/sshd_config \
-    && ln -sf /etc/services-config/ssh/ssh-bootstrap.conf /etc/ssh-bootstrap.conf
+    && ln -sf /etc/services-config/ssh/ssh-bootstrap.conf /etc/ssh-bootstrap.conf \
+    && mkdir -p /etc/supervisord
 
 # -----------------------------------------------------------------------------
 # Expose
