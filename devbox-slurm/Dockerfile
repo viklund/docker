@@ -46,10 +46,10 @@ RUN touch /var/spool/last_config_lite && \
 RUN chown root:slurm /var/spool && \
     chmod g+w /var/spool
 
-COPY supervisor_centos_agda.conf /etc/
+COPY supervisor_slurm.conf /etc/
 COPY slurm.conf /etc/sysconfig/slurm/slurm.conf
 COPY slurm-bootstrap /etc/
 
 RUN chmod +x /etc/slurm-bootstrap && \
-    cat /etc/supervisor_centos_agda.conf >> /etc/supervisord.conf
+    cat /etc/supervisor_slurm.conf >> /etc/supervisord.conf
        
