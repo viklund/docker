@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# Change working directory
-DIR_PATH="$( cd "$( echo "${0%/*}" )"; pwd )"
-if [[ $DIR_PATH == */* ]]; then
-    cd $DIR_PATH
-fi
-
 NO_CACHE="$1"
 
 source build.conf
