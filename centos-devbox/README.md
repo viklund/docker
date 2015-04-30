@@ -1,4 +1,4 @@
-centos-ssh
+centos-devbox
 ==========
 
 Docker Image of CentOS-6 6.5 x86\_64, expanded with SSH and basic development
