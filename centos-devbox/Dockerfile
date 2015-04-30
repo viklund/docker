@@ -72,7 +72,7 @@ RUN sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL/%wheel\tALL=(ALL)\tNOPASSWD: A
 # -----------------------------------------------------------------------------
 # Make the custom configuration directory
 # -----------------------------------------------------------------------------
-RUN mkdir -p /etc/services-config/{supervisor,ssh}
+RUN mkdir -p /etc/services-config/ssh
 
 # -----------------------------------------------------------------------------
 # Copy files into place
@@ -81,11 +81,10 @@ ADD etc/ssh-bootstrap /etc/
 ADD etc/services-config/ssh/authorized_keys /etc/services-config/ssh/
 ADD etc/services-config/ssh/sshd_config /etc/services-config/ssh/
 ADD etc/services-config/ssh/ssh-bootstrap.conf /etc/services-config/ssh/
-ADD etc/services-config/supervisor/supervisord.conf /etc/services-config/supervisor/
+ADD etc/services-config/supervisor/supervisord.conf /etc/
 
 RUN chmod 600 /etc/services-config/ssh/sshd_config \
     && chmod +x /etc/ssh-bootstrap \
-    && ln -sf /etc/services-config/supervisor/supervisord.conf /etc/supervisord.conf \
     && ln -sf /etc/services-config/ssh/sshd_config /etc/ssh/sshd_config \
     && ln -sf /etc/services-config/ssh/ssh-bootstrap.conf /etc/ssh-bootstrap.conf \
     && mkdir -p /etc/supervisord
