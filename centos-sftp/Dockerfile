@@ -20,20 +20,14 @@ RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-6 \
 # -----------------------------------------------------------------------------
 
 RUN yum -y install \
-        git \
-        vim \
-        sudo \
         openssh \
         openssh-server \
         openssh-clients \
-        man \
         python-pip \
-        tar \
     && yum -y reinstall cracklib-dicts \
     && yum -y update bash \
     && rm -rf /var/cache/yum/* \
-    && yum clean all \
-    && yum -y groupinstall "Development Tools"
+    && yum clean all
 
 # -----------------------------------------------------------------------------
 # Install supervisord (required to run more than a single process in a container)
@@ -53,21 +47,6 @@ RUN pip install --upgrade 'pip >= 1.4, < 1.5' \
 # -----------------------------------------------------------------------------
 RUN ln -sf /usr/share/zoneinfo/Europe/Stockholm /etc/localtime \
     && echo "NETWORKING=yes" > /etc/sysconfig/network
-
-# -----------------------------------------------------------------------------
-# Configure SSH for non-root public key authentication
-# -----------------------------------------------------------------------------
-RUN sed -i \
-    -e 's/^UsePAM yes/#UsePAM yes/g' \
-    -e 's/^#UsePAM no/UsePAM no/g' \
-    -e 's/^#PermitRootLogin yes/PermitRootLogin no/g' \
-    -e 's/^#UseDNS yes/UseDNS no/g' \
-    /etc/ssh/sshd_config
-
-# -----------------------------------------------------------------------------
-# Enable the wheel sudoers group
-# -----------------------------------------------------------------------------
-RUN sed -i 's/^# %wheel\tALL=(ALL)\tNOPASSWD: ALL/%wheel\tALL=(ALL)\tNOPASSWD: ALL/' /etc/sudoers
 
 # -----------------------------------------------------------------------------
 # Make the custom configuration directory
@@ -94,9 +73,5 @@ RUN chmod 600 /etc/services-config/ssh/sshd_config \
 # -----------------------------------------------------------------------------
 
 EXPOSE 22
-EXPOSE 80
-EXPOSE 443
-EXPOSE 8000
-EXPOSE 8001
 
 CMD ["/usr/bin/supervisord", "--configuration=/etc/supervisord.conf"]
