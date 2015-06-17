@@ -37,6 +37,6 @@ If you want you can mount a local directory as the home directory for the user,
 that way you can have a starting environment for SFTP. Then you will have to
 use this `run` command:
 
-    $ docker run -d -P --name sftp2 --hostname sftp -v /tmp/t2:/home/test2 -e SSH_USER=test2 viklund/centos-sftp
+    $ docker run -d -P --name sftp --hostname sftp -v /tmp/t2:/home/test2 -e SSH_USER=test2 viklund/centos-sftp
 
 That mounts the local directory /tmp/t2 as the home directory for the test2 user.
