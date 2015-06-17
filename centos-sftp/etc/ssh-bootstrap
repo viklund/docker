@@ -8,8 +8,6 @@ get_password ()
 	echo $(head -n 4096 /dev/urandom | tr -cd '[:alnum:]' | head -c ${1})
 }
 
-OPTS_SSH_USER_HOME_DIR="${SSH_USER_HOME_DIR:-/home/app-admin}"
-
 OPTS_SSH_USER="${SSH_USER:-app-admin}"
 OPTS_SSH_USER_PASSWORD="${SSH_USER_PASSWORD:-$(get_password 8)}"
 
@@ -21,11 +19,6 @@ ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
 ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
 
 useradd -u 500 -m -G users ${OPTS_SSH_USER}
-
-mkdir -m 700 ${OPTS_SSH_USER_HOME_DIR}/.ssh
-cp -f /etc/services-config/ssh/authorized_keys ${OPTS_SSH_USER_HOME_DIR}/.ssh/authorized_keys
-chown -R ${OPTS_SSH_USER}:${OPTS_SSH_USER} ${OPTS_SSH_USER_HOME_DIR}/.ssh
-chmod 600 ${OPTS_SSH_USER_HOME_DIR}/.ssh/authorized_keys
 
 # Set user password
 echo "${OPTS_SSH_USER}:${OPTS_SSH_USER_PASSWORD}" | chpasswd
