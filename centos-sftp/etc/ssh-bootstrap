@@ -3,8 +3,6 @@
 # Print commands and their arguments as they are executed.
 #set -x
 
-source /etc/ssh-bootstrap.conf
-
 get_password ()
 {
 	echo $(head -n 4096 /dev/urandom | tr -cd '[:alnum:]' | head -c ${1})
@@ -23,7 +21,6 @@ ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
 ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
 
 useradd -u 500 -m -G users ${OPTS_SSH_USER}
-usermod -s /sbin/nologin ${OPTS_SSH_USER}
 
 mkdir -m 700 ${OPTS_SSH_USER_HOME_DIR}/.ssh
 cp -f /etc/services-config/ssh/authorized_keys ${OPTS_SSH_USER_HOME_DIR}/.ssh/authorized_keys
